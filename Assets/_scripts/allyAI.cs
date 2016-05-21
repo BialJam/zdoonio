@@ -6,32 +6,58 @@ public class allyAI : MonoBehaviour {
 	public float walkSpeed = 5.0f;
 	public float attackDistance = 3.0f;
 	public float attackDemage = 10.0f;
-	public float attackDelay = 1.0f;
+	public float attackDelay = 2.0f;
 	public float hp = 50.0f;
 	public GameObject animo;
+	public GameObject zombie;
+	public AudioClip oneSlice;
 
 	private float timer = 0;
 	private string currentState;
 	private Animator animator;
 	private AnimatorStateInfo stateInfo;
+	private bool allyDie;
+	private float destroyWaitCounter;
+	private AudioSource cutAudio;
 
 	void Start () {
 		currentState = "";
+		destroyWaitCounter = 0.0f;
+		allyDie = false;
+		cutAudio = GetComponent<AudioSource>();
 	}
+
+	void Update (){
+		if (allyDie == true) {
+			destroyWaitCounter += Time.deltaTime;
+			if (destroyWaitCounter >= 5.0f) {
+				Instantiate (zombie, transform.position, transform.rotation);
+				Destroy (gameObject);
+			}
+		}
+	
+	}
+		
+
 
 	void takeHit(float damage) 
 	{
 		hp -= damage;
 		if (hp <= 0) {
 			animo.GetComponent<Animation> ().Play ("die");
+			allyDie = true;
 		} else {
 			animo.GetComponent<Animation> ().Play ("resist");
+			cutAudio.PlayOneShot (oneSlice, 1F);
 		}
 	}
 
+
 	void OnTriggerStay(Collider other)
 	{
-		if (other.tag.Equals ("Enemy") && hp > 0) {
+		//Debug.Log ("Przeciwnik wszedł w pole");
+		if (other.tag == "Enemy" && hp > 0) {
+			//Debug.Log ("Przeciwnik wszedł w pole1");
 			Quaternion targetRotation = Quaternion.LookRotation (other.transform.position - transform.position);
 			float oryginalX = transform.rotation.x;
 			float oryginalZ = transform.rotation.z;
@@ -58,5 +84,5 @@ public class allyAI : MonoBehaviour {
 			}
 		} 
 	}
+	}
 
-}
