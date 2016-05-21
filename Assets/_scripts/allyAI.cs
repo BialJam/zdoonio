@@ -29,7 +29,7 @@ public class allyAI : MonoBehaviour {
 		}
 	}
 
-	void OnTriggerEnter(Collider other)
+	void OnTriggerStay(Collider other)
 	{
 		if (other.tag.Equals ("Enemy") && hp > 0) {
 			Quaternion targetRotation = Quaternion.LookRotation (other.transform.position - transform.position);

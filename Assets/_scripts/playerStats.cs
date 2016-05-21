@@ -56,6 +56,10 @@ public class playerStats : MonoBehaviour {
 			regenerate(ref currentStamina, maxStamina);
 		}
 
+		if (currentStamina <= 0) {
+			currentStamina = 0;
+		}
+
 	}
 
 	void FixedUpdate () 
@@ -64,9 +68,6 @@ public class playerStats : MonoBehaviour {
 			lastPosition = transform.position;
 			currentStamina -= 1;
 			currentStamina = Mathf.Clamp(currentStamina, 0, maxStamina);
-			if (currentStamina <= 0) {
-				currentStamina = 0;
-			}
 		}	
 
 		if (currentStamina > 0) {

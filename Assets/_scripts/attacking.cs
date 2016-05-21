@@ -31,9 +31,7 @@ public class attacking : MonoBehaviour {
 		if(hitDelayCounter > 0) {
 			hitDelayCounter -= Time.deltaTime;
 		}
-
-
-
+			
 		if (Input.GetButtonDown ("Fire1")) {
 			  
 				hitDelayCounter = hitDelay;
@@ -47,5 +45,6 @@ public class attacking : MonoBehaviour {
 					}
 				}
 			}
+		 
 		}
 	}
