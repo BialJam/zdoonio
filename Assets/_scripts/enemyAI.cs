@@ -9,15 +9,31 @@ public class enemyAI : MonoBehaviour {
 	public float attackDelay = 1.0f;
 	public float hp = 50.0f;
 	public Transform[] transforms;
+	public AudioClip oneSlice;
 
 	private float timer = 0;
 	private string currentState;
 	private Animator animator;
 	private AnimatorStateInfo stateInfo;
+	private float destroyWaitCounter;
+	private bool enemyDie;
+	private AudioSource cutAudio;
 
 	void Start () {
 		animator = transforms[0].GetComponent<Animator>();
 		currentState = "";
+		destroyWaitCounter = 0.0f;
+		enemyDie = false;
+		cutAudio = GetComponent<AudioSource>();
+	}
+
+	void Update (){
+		if (enemyDie == true) {
+			destroyWaitCounter += Time.deltaTime;
+			if (destroyWaitCounter >= 5.0f) {
+				Destroy (gameObject);
+			}
+		}
 	}
 
 	void takeHit(float damage) 
@@ -25,7 +41,9 @@ public class enemyAI : MonoBehaviour {
 		hp -= damage;
 		if (hp <= 0) {
 			animationSet ("Die");
+			enemyDie = true;
 		} else {
+			cutAudio.PlayOneShot (oneSlice, 1F);
 			animationSet ("Gd");
 		}
 	}
@@ -46,19 +64,20 @@ public class enemyAI : MonoBehaviour {
 			if (distance > attackDistance && !stateInfo.IsName ("Base Layer.Gd")) {
 				animationSet ("Run");
 				transform.Translate (Vector3.forward * walkSpeed * Time.deltaTime);
-			} else if(distance <= attackDistance) {
+			}else if(distance <= attackDistance) {
 				if (timer <= 0) {
 					animationSet ("Atack_2");
 					other.SendMessage ("takeHit", attackDemage);
 					timer = attackDelay;
 				}
+			
 			}
-
-			if (timer > 0) {
+			if(timer > 0) {
 				timer -= Time.deltaTime;
 			}
-		} 
-	}
+		}
+	} 
+
 
 	void animationSet(string action)
 	{

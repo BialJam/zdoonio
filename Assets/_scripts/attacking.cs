@@ -45,6 +45,6 @@ public class attacking : MonoBehaviour {
 					}
 				}
 			}
-		 
+		hitDelayCounter = 0.0f;
 		}
 	}
