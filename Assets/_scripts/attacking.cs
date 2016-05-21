@@ -5,6 +5,7 @@ public class attacking : MonoBehaviour {
 
 
 	public float hitDelay = 0.5f;
+	public float damage = 5.0f;
 
 
 
@@ -33,6 +34,7 @@ public class attacking : MonoBehaviour {
 				if (Physics.Raycast (transform.position, fwd, out hit)) {
 					if (hit.transform.tag == "Enemy" && hit.distance < range) {
 						Debug.Log ("Trafiony przeciwnik");
+					hit.transform.gameObject.SendMessage ("takeHit", damage);
 
 					} else if (hit.distance < range) {
 						Debug.Log ("Trafiona Sciana");
