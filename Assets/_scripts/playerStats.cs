@@ -10,6 +10,10 @@ public class playerStats : MonoBehaviour {
 	private float currentStamina = 100;
 	public Text healthText;
 	public Text staminaText;
+	public Text macedoniaText;
+	public GameObject ally;
+	public Transform spawnAlly;
+	public float timer;
 
 	private float canHeal = 0.0f;
 	private float canRegenerate = 0.0f;
@@ -28,18 +32,33 @@ public class playerStats : MonoBehaviour {
 
 	void Start()
 	{
-
+		timer = 0.0f;
 	}
 
 	void Update()
 	{
+		timer += Time.deltaTime;
+
 		healthText.text =  "Health: " +  currentHealth;
 		staminaText.text = "Stamina: " +  currentStamina;
+		macedoniaText.text = "Ładowanie przyzwania kapitana Macedonii " + timer;
 
 		if ((Input.GetButtonDown ("Fire1"))){
 			currentStamina -= 30;
 
 			}
+
+		if ((Input.GetButtonDown ("Fire2"))){
+			if (timer > 30.0f) {
+				currentStamina -= 100;
+				Instantiate (ally, spawnAlly.position, spawnAlly.rotation);
+				timer = 0.0f;
+			}
+		}
+
+		if (currentHealth == 0) {
+			Application.LoadLevel (1);
+		}
 			
 
 		if(canHeal > 0.0f) {

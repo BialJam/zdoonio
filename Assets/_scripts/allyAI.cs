@@ -3,7 +3,7 @@ using System.Collections;
 
 public class allyAI : MonoBehaviour {
 
-	public float walkSpeed = 5.0f;
+	public float allyWalkSpeed = 5.0f;
 	public float attackDistance = 3.0f;
 	public float attackDemage = 10.0f;
 	public float attackDelay = 2.0f;
@@ -55,14 +55,15 @@ public class allyAI : MonoBehaviour {
 
 	void OnTriggerStay(Collider other)
 	{
+
 		//Debug.Log ("Przeciwnik wszedł w pole");
 		if (other.tag == "Enemy" && hp > 0) {
 			//Debug.Log ("Przeciwnik wszedł w pole1");
-			Quaternion targetRotation = Quaternion.LookRotation (other.transform.position - transform.position);
+			Quaternion targetRotation = Quaternion.LookRotation (other.transform.position - transform.position );
 			float oryginalX = transform.rotation.x;
 			float oryginalZ = transform.rotation.z;
 
-			Quaternion finalRotation = Quaternion.Slerp (transform.rotation, targetRotation, 5.0f * Time.deltaTime);
+			Quaternion finalRotation = Quaternion.Slerp (transform.rotation, targetRotation, 1.0f * Time.deltaTime);
 			finalRotation.x = oryginalX;
 			finalRotation.z = oryginalZ;
 			transform.rotation = finalRotation;
@@ -70,7 +71,7 @@ public class allyAI : MonoBehaviour {
 			float distance = Vector3.Distance (transform.position, other.transform.position);
 			if (distance > attackDistance && !stateInfo.IsName ("Base Layer.resist")) {
 				animo.GetComponent<Animation> ().Play ("run");
-				transform.Translate (Vector3.forward * walkSpeed * Time.deltaTime);
+				transform.Translate (Vector3.forward * allyWalkSpeed * Time.deltaTime);
 			} else if(distance <= attackDistance) {
 				if (timer <= 0) {
 					animo.GetComponent<Animation> ().Play ("attack");

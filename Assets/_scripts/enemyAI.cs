@@ -3,13 +3,14 @@ using System.Collections;
 
 public class enemyAI : MonoBehaviour {
 
-	public float walkSpeed = 5.0f;
+	public float enemyWalkSpeed = 5.0f;
 	public float attackDistance = 3.0f;
 	public float attackDemage = 10.0f;
 	public float attackDelay = 1.0f;
 	public float hp = 50.0f;
 	public Transform[] transforms;
 	public AudioClip oneSlice;
+
 
 	private float timer = 0;
 	private string currentState;
@@ -18,6 +19,7 @@ public class enemyAI : MonoBehaviour {
 	private float destroyWaitCounter;
 	private bool enemyDie;
 	private AudioSource cutAudio;
+	private gameController control;
 
 	void Start () {
 		animator = transforms[0].GetComponent<Animator>();
@@ -25,23 +27,35 @@ public class enemyAI : MonoBehaviour {
 		destroyWaitCounter = 0.0f;
 		enemyDie = false;
 		cutAudio = GetComponent<AudioSource>();
+		GameObject gameControllerObject = GameObject.FindGameObjectWithTag ("GameController");
+		if (gameControllerObject != null)
+		{
+			control = gameControllerObject.GetComponent<gameController>();
+		}
+		if (control == null)
+		{
+			Debug.Log ("Cannot find 'GameController' script");
+		}
 	}
 
 	void Update (){
 		if (enemyDie == true) {
 			destroyWaitCounter += Time.deltaTime;
+
 			if (destroyWaitCounter >= 5.0f) {
+				control.AddScore (15);
 				Destroy (gameObject);
 			}
 		}
 	}
 
-	void takeHit(float damage) 
+	private void takeHit(float damage) 
 	{
 		hp -= damage;
 		if (hp <= 0) {
 			animationSet ("Die");
 			enemyDie = true;
+
 		} else {
 			cutAudio.PlayOneShot (oneSlice, 1F);
 			animationSet ("Gd");
@@ -55,7 +69,7 @@ public class enemyAI : MonoBehaviour {
 			float oryginalX = transform.rotation.x;
 			float oryginalZ = transform.rotation.z;
 
-			Quaternion finalRotation = Quaternion.Slerp (transform.rotation, targetRotation, 5.0f * Time.deltaTime);
+			Quaternion finalRotation = Quaternion.Slerp (transform.rotation, targetRotation, 1.0f * Time.deltaTime);
 			finalRotation.x = oryginalX;
 			finalRotation.z = oryginalZ;
 			transform.rotation = finalRotation;
@@ -63,7 +77,7 @@ public class enemyAI : MonoBehaviour {
 			float distance = Vector3.Distance (transform.position, other.transform.position);
 			if (distance > attackDistance && !stateInfo.IsName ("Base Layer.Gd")) {
 				animationSet ("Run");
-				transform.Translate (Vector3.forward * walkSpeed * Time.deltaTime);
+				transform.Translate (Vector3.forward * enemyWalkSpeed * Time.deltaTime);
 			}else if(distance <= attackDistance) {
 				if (timer <= 0) {
 					animationSet ("Atack_2");
